@@ -1,3 +1,2 @@
-## ToDo List
-show a loading image while waiting
-let user get joke in specific category.
+## Chuck Norris Jokes
+JS app using AJAX to talk to icndb.com
