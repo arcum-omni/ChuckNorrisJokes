@@ -23,6 +23,8 @@ window.onload = function(){
 
     let jokeBtn = document.getElementById("get-joke");
     jokeBtn.onclick = fetchJoke;
+
+    populateCategories();
 }
 
 /**
@@ -31,6 +33,11 @@ window.onload = function(){
 function fetchJoke(){
     // AJAX: JS that talks to a server (XML/?JSON to transport data, JS to display data)
     // https://www.w3schools.com/xml/ajax_intro.asp
+
+    // disabled joke button immediatley following button click
+    let jokeBtn = <HTMLButtonElement>this;
+    jokeBtn.disabled = true;
+
     let request = new XMLHttpRequest();
     request.onreadystatechange = handleJokeResponse;
 
@@ -39,6 +46,10 @@ function fetchJoke(){
 
     // Initiate request
     request.send();
+
+    let loaderImg = document.getElementById("loader");
+    loaderImg.classList.add("loader");
+
 
 }
 
@@ -67,6 +78,58 @@ function handleJokeResponse(){
 function displayJoke(j:ChuckNorrisJoke):void{
     let jokeTextParagraph = document.getElementById("joke-text");
     jokeTextParagraph.innerHTML = j.joke;
+
+    let jokeIdParagraph = document.getElementById("joke-id");
+    jokeIdParagraph.innerHTML = "ID#: " + j.id.toString();
+
+    let categoryList = document.getElementById("categories");
+    categoryList.innerHTML = ""; // Clear categories from any previous joke.
+
+    let allCategories = j.categories;
+    allCategories.sort();
+    for(let i=0; i<allCategories.length; i++){
+        let item = document.createElement("li");
+        item.innerHTML = allCategories[i];
+        // Creating HTML - <li>Nerdy</li>
+
+        // <ul> <li>Nerdy</li></ul>
+        categoryList.appendChild(item);
+    }
+
+    let catDisplay = document.getElementById("category-display");
+    if(allCategories.length == 0){
+        catDisplay.style.display = "none";
+    }
+    else{
+        catDisplay.style.display = "block";
+    }
+
+    let loaderImg = document.getElementById("loader");
+    loaderImg.classList.remove("loader");
+
+    // Re-enable joke button 0.5s after joke is displayed.
+    // so user can get another joke
+    setTimeout(function(){
+        let jokeBtn = <HTMLButtonElement>document.getElementById("get-joke");
+        jokeBtn.disabled = false;
+    }, 500);
+}
+
+/**
+ * Display categories in a drop down list
+ * https://www.w3schools.com/js/js_ajax_intro.asp
+ */
+function populateCategories(){
+    let request = new XMLHttpRequest();
+    request.open("GET", "https://api.icndb.com/categories");
+
+    request.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){ // this = request in this case (this.readyState = request.readyState)
+            let categories:string[] = JSON.parse(this.responseText).value;
+            console.log(categories);
+        }
+    }
+    request.send();
 }
 
 /**

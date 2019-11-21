@@ -6,18 +6,21 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="images/hut8_wireframe.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles/main.css">
-    <title>Chuck Norris Application, Hut8 Dev</title>
+    <title>Chuck Norris Application, Hut8 Dev WebService WebAPI AJAX</title>
 </head>
 <body>
     <h1>Chuck Norris Jokes</h1>
 
     <button id="get-joke" type="button">Get Random Joke</button>
-    <br>
+    <img height="50" id="loader" src="images/loading3.gif" alt=""><br><br>
+
     <p id="joke-id"></p>
     <p id="joke-text"></p>
-    <ul id="categories"></ul>
 
-
+    <div id="category-display">
+        <h3>Categories</h3>
+        <ul id="categories"></ul>
+    </div>
 
     <div id="copyright">
         Visit us on Facebook at <a href="https://www.facebook.com/hut8.dev/">@hut8dev</a><br>
