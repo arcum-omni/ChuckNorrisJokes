@@ -23,12 +23,38 @@ function fetchJoke() {
     jokeBtn.disabled = true;
     var request = new XMLHttpRequest();
     request.onreadystatechange = handleJokeResponse;
+    var url = "https://api.icndb.com/jokes/random";
+    if (isCategorySelected()) {
+        url += "?limitTo=[" + getSelectedCategory() + "]";
+        // using a variable for the function call can help with debugging
+        // let category = getSelectedCategory();
+        // url += "?limitTo=[" + category + "]";
+    }
     // Set URL to send request to:
-    request.open("GET", "https://api.icndb.com/jokes/random");
+    request.open("GET", url);
     // Initiate request
     request.send();
     var loaderImg = document.getElementById("loader");
     loaderImg.classList.add("loader");
+}
+/**
+ *
+ */
+function isCategorySelected() {
+    var list = document.getElementById("cat-list");
+    if (list.selectedIndex == 0) {
+        return false;
+    }
+    return true;
+}
+/**
+ * Return the selected category
+ */
+function getSelectedCategory() {
+    var list = document.getElementById("cat-list");
+    var index = list.selectedIndex;
+    var cat = list.options[index].text;
+    return cat;
 }
 /**
  * function to handle response from server
@@ -90,12 +116,26 @@ function populateCategories() {
     var request = new XMLHttpRequest();
     request.open("GET", "https://api.icndb.com/categories");
     request.onreadystatechange = function () {
+        // Request has finished (4) successfully (200)
         if (this.readyState == 4 && this.status == 200) { // this = request in this case (this.readyState = request.readyState)
             var categories = JSON.parse(this.responseText).value;
             console.log(categories);
+            populateCatDropDown(categories);
         }
     };
     request.send();
+}
+/**
+ *
+ * @param categories
+ */
+function populateCatDropDown(categories) {
+    var list = document.getElementById("cat-list");
+    for (var i = 0; i < categories.length; i++) {
+        var catOptions = document.createElement("option");
+        catOptions.text = categories[i];
+        list.appendChild(catOptions); // add option to the select
+    }
 }
 /**
  * Displays current year (1999) in the copyright statement

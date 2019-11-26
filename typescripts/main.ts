@@ -41,8 +41,17 @@ function fetchJoke(){
     let request = new XMLHttpRequest();
     request.onreadystatechange = handleJokeResponse;
 
+    let url = "https://api.icndb.com/jokes/random"
+    if(isCategorySelected()){
+        url += "?limitTo=[" + getSelectedCategory() + "]";
+
+        // using a variable for the function call can help with debugging
+        // let category = getSelectedCategory();
+        // url += "?limitTo=[" + category + "]";
+    }
+
     // Set URL to send request to:
-    request.open("GET", "https://api.icndb.com/jokes/random");
+    request.open("GET", url);
 
     // Initiate request
     request.send();
@@ -51,6 +60,28 @@ function fetchJoke(){
     loaderImg.classList.add("loader");
 
 
+}
+
+/**
+ * 
+ */
+function isCategorySelected():boolean{
+    let list = <HTMLSelectElement>document.getElementById("cat-list");
+    if(list.selectedIndex == 0){
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Return the selected category
+ */
+function getSelectedCategory():string{
+    let list = <HTMLSelectElement>document.getElementById("cat-list");
+    let index = list.selectedIndex;
+    let cat = list.options[index].text;
+
+    return cat;
 }
 
 /**
@@ -124,12 +155,28 @@ function populateCategories(){
     request.open("GET", "https://api.icndb.com/categories");
 
     request.onreadystatechange = function(){
+        // Request has finished (4) successfully (200)
         if(this.readyState == 4 && this.status == 200){ // this = request in this case (this.readyState = request.readyState)
             let categories:string[] = JSON.parse(this.responseText).value;
             console.log(categories);
+
+            populateCatDropDown(categories);
         }
     }
     request.send();
+}
+
+/**
+ * 
+ * @param categories 
+ */
+function populateCatDropDown(categories:string[]):void{
+    let list = document.getElementById("cat-list");
+    for(let i = 0; i<categories.length; i++){
+        let catOptions = document.createElement("option")
+        catOptions.text = categories[i];
+        list.appendChild(catOptions); // add option to the select
+    }
 }
 
 /**
